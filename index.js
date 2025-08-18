@@ -54,7 +54,7 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons/',(request,response) => {
-    const id = Math.floor(Math.random() * 10000000) + 1;
+    const id = (Math.floor(Math.random() * 10000000) + 1).toString();
     const person = request.body
     if(person.name === "" || person.number === ""){
         response.status(400).send({ error: 'name is missing' }).end()
