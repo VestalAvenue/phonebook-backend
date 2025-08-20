@@ -29,6 +29,22 @@ app.get('/api/persons', (request,response) => {
         })
 })
 
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+}
+app.use(unknownEndpoint)
+
+const errorHandler = (error, reuqest, response, next) => {
+    console.error(error.message)
+
+    if(error.name === 'CastError'){
+        return response.status(400).send({ error: 'malformatted id'})
+    }
+    next(error)
+}
+
+app.use(errorHandler)
+
 app.get('/info',(request,response) => {
     const total = persons.length
     const currentTime = new Date()
@@ -37,11 +53,16 @@ app.get('/info',(request,response) => {
         <p>${currentTime}</p>`)
 })
 
-app.get('/api/persons/:id', (request,response) => {
+app.get('/api/persons/:id', (request,response,next) => {
     Phone.findById(request.params.id)
         .then(person => {
-            response.json(person)
+            if(person){
+                response.json(person)
+            }else {
+                response.status(404).end()
+            }
         })
+        .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -66,6 +87,29 @@ app.post('/api/persons/',(request,response) => {
     savedPhone.save().then(savedPhone =>{
         response.json(savedPhone)
     })
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number
+  }
+
+  Phone.findByIdAndUpdate(
+    request.params.id,
+    person,
+    { new: true, runValidators: true, context: 'query' }
+  )
+  .then(updatedPerson => {
+    if (updatedPerson) {
+      response.json(updatedPerson)
+    } else {
+      response.status(404).end()
+    }
+  })
+  .catch(error => next(error))
 })
 
 const path = require('path')
