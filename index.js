@@ -34,7 +34,7 @@ const unknownEndpoint = (request, response) => {
 }
 app.use(unknownEndpoint)
 
-const errorHandler = (error, reuqest, response, next) => {
+const errorHandler = (error, request, response, next) => {
     console.error(error.message)
 
     if(error.name === 'CastError'){
@@ -45,13 +45,15 @@ const errorHandler = (error, reuqest, response, next) => {
 
 app.use(errorHandler)
 
-app.get('/info',(request,response) => {
-    const total = persons.length
-    const currentTime = new Date()
-    response.send(
-        `<p>Phonebook has info of ${total} people</p>
-        <p>${currentTime}</p>`)
+app.get('/info', (req, res, next) => {
+  Phone.countDocuments({})
+    .then(count => {
+      const currentTime = new Date()
+      res.send(`<p>Phonebook has info of ${count} people</p><p>${currentTime}</p>`)
+    })
+    .catch(error => next(error))
 })
+
 
 app.get('/api/persons/:id', (request,response,next) => {
     Phone.findById(request.params.id)
@@ -115,9 +117,9 @@ app.put('/api/persons/:id', (request, response, next) => {
 const path = require('path')
 
 // 🔹 Catch-all route for React frontend
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
-// })
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT)
