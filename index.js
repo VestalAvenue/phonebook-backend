@@ -45,16 +45,11 @@ app.get('/api/persons/:id', (request,response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const person = persons.find(p => p.id === id)
-
-    if (person) {
-        persons = persons.filter(p => p.id !== id)
-        response.status(204).end()
-    } else {
-        response.status(404).end()
-    }
-})
+    Phone.findByIdAndRemove(request.params.id)
+        .then(() => {
+            response.status(204).end()
+        })
+    })
 
 app.post('/api/persons/',(request,response) => {
     const body = request.body
