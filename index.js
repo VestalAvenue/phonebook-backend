@@ -117,9 +117,9 @@ app.put('/api/persons/:id', (request, response, next) => {
 const path = require('path')
 
 // 🔹 Catch-all route for React frontend
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
-})
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+// })
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT)
