@@ -1,3 +1,6 @@
+
+require('dotenv').config()
+const Phone = require (`./models/phoneBook`)
 const http = require("http")
 const express = require('express')
 const app = express()
@@ -11,15 +14,19 @@ app.use(express.static('dist'))
 morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-let persons = [
-    { "id": "1", "name": "Arto Hellas", "number": "040-123456" },
-    { "id": "2", "name": "Ada Lovelace", "number": "39-44-5323523" },
-    { "id": "3", "name": "Dan Abramov", "number": "12-43-234345" },
-    { "id": "4", "name": "Mary Poppendieck", "number": "39-23-6423122" }
-]
+// let persons = [
+//     { "id": "1", "name": "Arto Hellas", "number": "040-123456" },
+//     { "id": "2", "name": "Ada Lovelace", "number": "39-44-5323523" },
+//     { "id": "3", "name": "Dan Abramov", "number": "12-43-234345" },
+//     { "id": "4", "name": "Mary Poppendieck", "number": "39-23-6423122" }
+// ]
 
 app.get('/api/persons', (request,response) => {
-    response.json(persons)
+    Phone.find({})
+        .then(phones => {
+            response.json(phones)
+            console.log(phones)
+        })
 })
 
 app.get('/info',(request,response) => {
@@ -31,14 +38,10 @@ app.get('/info',(request,response) => {
 })
 
 app.get('/api/persons/:id', (request,response) => {
-    const id = request.params.id > persons.length ? false : request.params.id
-    if(id){
-        const person = persons.find(p=> id === p.id)
-        response.json(person)
-    }
-    else{
-        response.status(404).end()
-    }
+    Phone.findById(request.params.id)
+        .then(person => {
+            response.json(person)
+        })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -54,19 +57,20 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons/',(request,response) => {
-    const id = (Math.floor(Math.random() * 10000000) + 1).toString()
-    const person = request.body
-    if(person.name === "" || person.number === ""){
-        response.status(400).send({ error: 'name is missing' }).end()
-        return
+    const body = request.body
+    if(!body.content){
+        return response.status(400).json({
+            error: 'content missing'
+        })
     }
-    else if((duplicate = persons.some(p=> p.name === person.name))){
-        response.status(400).send({error: "name must be unique"}).end()
-        return
-    }
-    person.id = id
-    persons = persons.concat(person)
-    response.json(person)
+    const savedPhone = new Phone({
+        name: body.name,
+        number: body.number
+    })
+
+    savedPhone.save().then(savedPhone =>{
+        response.json(savedPhone)
+    })
 })
 
 const path = require('path')
