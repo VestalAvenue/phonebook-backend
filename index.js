@@ -74,6 +74,7 @@ app.post('/api/persons/',(request,response) => {
     savedPhone.save().then(savedPhone =>{
         response.json(savedPhone)
     })
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
