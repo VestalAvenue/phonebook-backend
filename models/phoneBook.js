@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
 
-// if (process.argv.length < 3) {
-//   console.log('give password as argument')
-//   process.exit(1)
-// }
-// const password = process.argv[2]
+if (process.argv.length < 3) {
+  console.log('give password as argument')
+  process.exit(1)
+}
+const password = process.argv[2]
 
-const url = process.env.MONGODB_URI
+const url = process.env.MONGODB_URI || `mongodb+srv://fullstack:${password}@cluster0.9qbjqmw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
 mongoose.set('strictQuery',false)
 
 console.log(`Connecting ot MongoDB at ${url}`)
@@ -20,8 +20,8 @@ mongoose.connect(url)
 
 const validator = (number) => {
   // Either: all digits (at least 8) OR prefix (1–3 digits + dash) + digits
-  const regex = /^(\d{8,}|\d{1,3}-\d{6,})$/
-  return regex.test(number)
+  const regex = /^(\d{8,15}|\d{1,3}-\d{6,15})$/
+  return regex.test(number.trim())
 }
 
 const phoneSchema = new mongoose.Schema({
