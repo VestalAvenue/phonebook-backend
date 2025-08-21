@@ -20,7 +20,7 @@ mongoose.connect(url)
     })
 
 const validator =  (number) => {
-    const regex = /^\d{1,2,3}-\d+&/
+    const regex = /^\d{1,3}-\d+&/
     return regex.test(number) && number.length >= 8
 }
 
