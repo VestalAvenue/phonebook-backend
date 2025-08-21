@@ -7,7 +7,6 @@ const mongoose = require('mongoose')
 // const password = process.argv[2]
 
 const url = process.env.MONGODB_URI
-
 mongoose.set('strictQuery',false)
 
 console.log(`Connecting ot MongoDB at ${url}`)
@@ -20,7 +19,7 @@ mongoose.connect(url)
     })
 
 const validator =  (number) => {
-    const regex = /^\d{1,3}-\d+&/
+    const regex = /^\d{1,3}-\d+$/
     return regex.test(number) && number.length >= 8
 }
 
@@ -40,8 +39,6 @@ const phoneSchema = new mongoose.Schema({
   }
 })
 
-const Phone = mongoose.model('phoneBook', phoneSchema)
-
 phoneSchema.set('toJSON', {
     transform: (document, returnedObject) =>{
         returnedObject.id = returnedObject._id.toString()
@@ -50,7 +47,12 @@ phoneSchema.set('toJSON', {
     }
 })
 
-module.exports = mongoose.model('phoneBook', phoneSchema)
+const Phone = mongoose.model('phoneBook', phoneSchema)
+module.exports = Phone
+
+
+
+// module.exports = mongoose.model('phoneBook', phoneSchema)
 
 // if (process.argv.length > 3){
 //   const name = process.argv[3]
