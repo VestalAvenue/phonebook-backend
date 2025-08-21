@@ -20,7 +20,7 @@ mongoose.connect(url)
 
 const validator = (number) => {
   // Either: all digits (at least 8) OR prefix (1–3 digits + dash) + digits
-  const regex = /^(\d{8,15}|\d{1,3}-\d{6,15})$/
+  const regex = /^(\d{1,3}-\d{6,15})$/
   return regex.test(number.trim())
 }
 
