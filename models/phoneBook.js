@@ -18,25 +18,26 @@ mongoose.connect(url)
         console.log('Error conncting to MongoDB:' , error.message)
     })
 
-const validator =  (number) => {
-    const regex = /^\d{1,3}-\d+$/
-    return regex.test(number) && number.length >= 8
+const validator = (number) => {
+  // Either: all digits (at least 8) OR prefix (1–3 digits + dash) + digits
+  const regex = /^(\d{8,}|\d{1,3}-\d{6,})$/
+  return regex.test(number)
 }
 
 const phoneSchema = new mongoose.Schema({
   name: {
     type: String,
     minLength: 3,
-    required: true
+    required: true,
   },
   number: {
     type: String,
     required: [true, `number is required`],
     validate: {
-        validator: validator,
-        message: props => `${props.value} is not a valid phone number`
-    }
-  }
+      validator: validator,
+      message: (props) => `${props.value} is not a valid phone number`,
+    },
+  },
 })
 
 phoneSchema.set('toJSON', {
