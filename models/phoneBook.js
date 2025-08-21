@@ -6,17 +6,17 @@ const mongoose = require('mongoose')
 // }
 // const password = process.argv[2]
 // `mongodb+srv://fullstack:${password}@cluster0.9qbjqmw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
-const url = process.env.MONGODB_URI || 
+const url = process.env.MONGODB_URI ||
 mongoose.set('strictQuery',false)
 
 console.log(`Connecting ot MongoDB at ${url}`)
 mongoose.connect(url)
-    .then(() => {
-        console.log('Connected to MongoDB')
-    })
-    .catch((error) => {
-        console.log('Error conncting to MongoDB:' , error.message)
-    })
+  .then(() => {
+    console.log('Connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('Error conncting to MongoDB:' , error.message)
+  })
 
 const validator = (number) => {
   // Either: all digits (at least 8) OR prefix (1–3 digits + dash) + digits
@@ -32,7 +32,7 @@ const phoneSchema = new mongoose.Schema({
   },
   number: {
     type: String,
-    required: [true, `number is required`],
+    required: [true, 'number is required'],
     validate: {
       validator: validator,
       message: (props) => `${props.value} is not a valid phone number`,
@@ -41,11 +41,11 @@ const phoneSchema = new mongoose.Schema({
 })
 
 phoneSchema.set('toJSON', {
-    transform: (document, returnedObject) =>{
-        returnedObject.id = returnedObject._id.toString()
-        delete returnedObject._id
-        delete returnedObject.__v
-    }
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
 })
 
 const Phone = mongoose.model('phoneBook', phoneSchema)

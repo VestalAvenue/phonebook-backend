@@ -27,7 +27,7 @@ if (process.argv.length > 3){
     number,
   })
   newPhone.save().then(result => {
-    console.log(`Phone saved`)
+    console.log('Phone saved')
     mongoose.connection.close()
   })}
 
@@ -39,11 +39,11 @@ if (process.argv.length > 3){
 
 if(process.argv.length === 3){
   Phone.find({}).then(result => {
-  result.forEach(Phone => {
-    console.log(`${Phone.name} ${Phone.number}`)
+    result.forEach(Phone => {
+      console.log(`${Phone.name} ${Phone.number}`)
+    })
+    mongoose.connection.close()
   })
-  mongoose.connection.close()
-})
 }
 
 // Phone.save().then(result => {
